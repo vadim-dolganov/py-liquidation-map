@@ -93,14 +93,20 @@ class HistoricalMapping:
         prefix_list = []
         if self._exchange == "binance":
             for date in pd.date_range(self._make_start_date(), self._make_end_date()):
-                prefix_list.append(
-                    f"data/futures/um/daily/aggTrades/{self._symbol}/{self._symbol}-aggTrades-{date.strftime('%Y-%m-%d')}.csv"
-                )
+                file_path = f"data/futures/um/daily/aggTrades/{self._symbol}/{self._symbol}-aggTrades-{date.strftime('%Y-%m-%d')}.csv"
+                if os.path.exists(file_path):
+                    prefix_list.append(file_path)
+                #prefix_list.append(
+                #    f"data/futures/um/daily/aggTrades/{self._symbol}/{self._symbol}-aggTrades-{date.strftime('%Y-%m-%d')}.csv"
+                #)
         elif self._exchange == "bybit":
             for date in pd.date_range(self._make_start_date(), self._make_end_date()):
-                prefix_list.append(
-                    f"bybit_data/trading/{self._symbol}/{self._symbol}{date.strftime('%Y-%m-%d')}.csv"
-                )
+                file_path = f"bybit_data/trading/{self._symbol}/{self._symbol}{date.strftime('%Y-%m-%d')}.csv"
+                if os.path.exists(file_path):
+                    prefix_list.append(file_path)
+                #prefix_list.append(
+                #    f"bybit_data/trading/{self._symbol}/{self._symbol}{date.strftime('%Y-%m-%d')}.csv"
+                #)
         else:
             raise ExchangeNotSupportedError(
                 f"Exchange {self._exchange} is not supported."

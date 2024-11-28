@@ -3,6 +3,8 @@ import datetime
 import math
 import warnings
 
+import os
+
 # import third-party libraries
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
@@ -491,7 +493,8 @@ class HistoricalMapping:
         threshold_gross_value=10000,
         threshold_top_n=100,
         threshold_portion=0.010,
-    ) -> None:
+        save_directory="."
+    ) -> str:
         """
         Draw liquidation map depth from historical data
         :param mode: draw mode "gross_value", "top_n", "portion" is available.
@@ -507,6 +510,10 @@ class HistoricalMapping:
         :param threshold_portion: threshold for top n%
         :return:
         """
+        
+        # Ensure the save directory exists
+        os.makedirs(save_directory, exist_ok=True)
+    
         # Downloading historical data
         self._download()
 
@@ -628,7 +635,9 @@ class HistoricalMapping:
                 max_amount = agg_df["amount"].max()
 
         # Save liquidation map data as csv
-        save_title = f"{self._symbol}_{self._start_datetime.replace(' ', '_').replace(':', '-')}-{self._end_datetime.replace(' ', '_').replace(':', '-')}"
+        #save_title = f"{self._symbol}_{self._start_datetime.replace(' ', '_').replace(':', '-')}-{self._end_datetime.replace(' ', '_').replace(':', '-')}"
+        save_title = os.path.join(save_directory, f"{self._symbol}_{self._start_datetime.replace(' ', '_').replace(':', '-')}-{self._end_datetime.replace(' ', '_').replace(':', '-')}")
+
         if mode == "gross_value":
             save_title += f"_gross_value_{threshold_gross_value}_depth.png"
         elif mode == "top_n":
@@ -745,5 +754,7 @@ class HistoricalMapping:
         # Save liquidation map data as csv
         for df_l, label in zip(df_losscut_list, labels):
             df_l.to_csv(
-                f"{save_title.replace('.png', '')}_{label.replace(' ', '_')}_sell.csv"
+                os.path.join(save_directory, f"{save_title.replace('.png', '')}_{label.replace(' ', '_')}_buy.csv")
+                #f"{save_title.replace('.png', '')}_{label.replace(' ', '_')}_sell.csv"
             )
+        return save_title

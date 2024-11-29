@@ -496,7 +496,7 @@ class HistoricalMapping:
         # Save liquidation map data as csv
         for df_l, label in zip(df_losscut_list, labels):
             df_l.to_csv(
-                os.path.join(save_directory, f"{save_title.replace('.png', '')}_{label.replace(' ','_')}_sell.csv"")
+                os.path.join(save_directory, f"{save_title.replace('.png', '')}_{label.replace(' ','_')}_sell.csv")
                 #f"{save_title.replace('.png', '')}_{label.replace(' ','_')}_sell.csv"
             )
         return save_title

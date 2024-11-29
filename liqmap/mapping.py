@@ -296,7 +296,7 @@ class HistoricalMapping:
                 label=label,
             )
 
-        ax1.plot(df_merged["timestamp"], df_merged["price"], c="k", label="price")
+        ax1.plot(df_merged["timestamp"], df_merged["price"], c="k", label="price", linewidth=0.5)
         ax1.set_xlabel("datetime")
         ax1.set_ylabel("price [USDT]")
         ax1.tick_params(axis="x", labelrotation=45)

@@ -257,17 +257,11 @@ class HistoricalMapping:
         # mode: gross_value
         if mode == "gross_value":
 
-            # Преобразуем значения в "amount" и округлим их до 2 знаков
-            df_buy["amount"] = df_buy["amount"].apply(lambda x: round(x, 2))
-            
-            # Удаляем строки с NaN в столбце "amount"
-            df_buy = df_buy.dropna(subset=["amount"])
-            
-            # Фильтруем строки по порогу
+            # Преобразовать столбец в числовой формат и удалить строки с NaN
+            df_losscut["price"] = pd.to_numeric(df_losscut["price"], errors="coerce")
+            df_losscut = df_losscut.dropna(subset=["price"])
             df_buy = df_buy[df_buy["amount"] >= threshold_gross_value]
             
-            # Удаляем пустые строки, где все значения NaN
-            df_buy = df_buy.dropna(how="all")
             
             df_sell = df_sell[df_sell["amount"] >= threshold_gross_value]
         elif mode == "top_n":

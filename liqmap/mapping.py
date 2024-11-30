@@ -268,6 +268,9 @@ class HistoricalMapping:
             df_buy["amount"] = df_buy["amount"].astype(float)
             df_sell["amount"] = df_sell["amount"].astype(float)
 
+            df_buy = df_buy[~df_buy["amount"].apply(lambda x: isinstance(x, str))]
+            df_sell = df_sell[~df_sell["amount"].apply(lambda x: isinstance(x, str))]
+
             df_buy = df_buy[df_buy["amount"] >= threshold_gross_value]
             df_sell = df_sell[df_sell["amount"] >= threshold_gross_value]
         elif mode == "top_n":

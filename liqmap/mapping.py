@@ -257,20 +257,20 @@ class HistoricalMapping:
         # mode: gross_value
         if mode == "gross_value":
             # Убедитесь, что в столбце только числа
-            df_buy["amount"] = pd.to_numeric(df_buy["amount"], errors="coerce")
-            df_sell["amount"] = pd.to_numeric(df_sell["amount"], errors="coerce")
+            #df_buy["amount"] = pd.to_numeric(df_buy["amount"], errors="coerce")
+            #df_sell["amount"] = pd.to_numeric(df_sell["amount"], errors="coerce")
             
             # Удалите строки с некорректными значениями
-            df_buy = df_buy.dropna(subset=["amount"])
-            df_sell = df_sell.dropna(subset=["amount"])
+            #df_buy = df_buy.dropna(subset=["amount"])
+            #df_sell = df_sell.dropna(subset=["amount"])
             
             # Приведите данные к типу float
-            df_buy["amount"] = df_buy["amount"].astype(float)
-            df_sell["amount"] = df_sell["amount"].astype(float)
+            #df_buy["amount"] = df_buy["amount"].astype(float)
+            #df_sell["amount"] = df_sell["amount"].astype(float)
 
-            df_buy = df_buy[~df_buy["amount"].apply(lambda x: isinstance(x, str))]
-            df_sell = df_sell[~df_sell["amount"].apply(lambda x: isinstance(x, str))]
-
+            #df_buy = df_buy[~df_buy["amount"].apply(lambda x: isinstance(x, str))]
+            #df_sell = df_sell[~df_sell["amount"].apply(lambda x: isinstance(x, str))]
+            
             df_buy = df_buy[df_buy["amount"] >= threshold_gross_value]
             df_sell = df_sell[df_sell["amount"] >= threshold_gross_value]
         elif mode == "top_n":

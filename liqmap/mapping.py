@@ -285,7 +285,7 @@ class HistoricalMapping:
             raise InvalidParamError(f"mode {mode} is not supported.")
 
         # Visualize liquidation map
-        fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, sharey=True, figsize=(9, 9))
+        fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, sharey=True, figsize=(14, 10))
         # draw price on ax1
         for i, dt in enumerate(df_buy["timestamp"]):
             label = "large BUY LONG" if i == 0 else None

@@ -257,17 +257,17 @@ class HistoricalMapping:
         # mode: gross_value
         if mode == "gross_value":
 
-        # Преобразуем значения в "amount" и округлим их до 2 знаков
-        df_buy["amount"] = df_buy["amount"].apply(lambda x: round(x, 2))
-        
-        # Удаляем строки с NaN в столбце "amount"
-        df_buy = df_buy.dropna(subset=["amount"])
-        
-        # Фильтруем строки по порогу
-        df_buy = df_buy[df_buy["amount"] >= threshold_gross_value]
-        
-        # Удаляем пустые строки, где все значения NaN
-        df_buy = df_buy.dropna(how="all")
+            # Преобразуем значения в "amount" и округлим их до 2 знаков
+            df_buy["amount"] = df_buy["amount"].apply(lambda x: round(x, 2))
+            
+            # Удаляем строки с NaN в столбце "amount"
+            df_buy = df_buy.dropna(subset=["amount"])
+            
+            # Фильтруем строки по порогу
+            df_buy = df_buy[df_buy["amount"] >= threshold_gross_value]
+            
+            # Удаляем пустые строки, где все значения NaN
+            df_buy = df_buy.dropna(how="all")
             
             df_sell = df_sell[df_sell["amount"] >= threshold_gross_value]
         elif mode == "top_n":
@@ -552,11 +552,7 @@ class HistoricalMapping:
 
         # mode: gross_value
         if mode == "gross_value":
-            df_buy["amount"] = pd.to_numeric(df_buy["amount"], errors="coerce")
-            df_buy = df_buy.dropna(subset=["amount"])
-            df_buy = df_buy.dropna(how="all")
             df_buy = df_buy[df_buy["amount"] >= threshold_gross_value]
-
             df_sell = df_sell[df_sell["amount"] >= threshold_gross_value]
         elif mode == "top_n":
             df_buy = df_buy.sort_values(by="amount", ascending=False)

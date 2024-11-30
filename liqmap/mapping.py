@@ -357,33 +357,35 @@ class HistoricalMapping:
         max_amount = 0
         for i, df_losscut in enumerate(df_losscut_list):
             df_losscut = df_losscut[df_losscut["price"] <= current_price]
-            g_ids = int(
-                (
-                    round(df_losscut["price"].max(), tick_degits)
-                    - round(df_losscut["price"].min(), tick_degits)
+            # Проверяем, есть ли данные после фильтрации
+            if not df_losscut.empty and df_losscut["price"].notna().any():
+                g_ids = int(
+                    (
+                        round(df_losscut["price"].max(), tick_degits)
+                        - round(df_losscut["price"].min(), tick_degits)
+                    )
+                    * 10**tick_degits
                 )
-                * 10**tick_degits
-            )
-            bins = [
-                round(
-                    round(df_losscut["price"].min(), tick_degits)
-                    + i * 10**-tick_degits,
-                    tick_degits,
+                bins = [
+                    round(
+                        round(df_losscut["price"].min(), tick_degits)
+                        + i * 10**-tick_degits,
+                        tick_degits,
+                    )
+                    for i in range(g_ids)
+                ]
+                df_losscut["group_id"] = pd.cut(df_losscut["price"], bins=bins)
+                agg_df = df_losscut.groupby("group_id").sum()
+                ax2.barh(
+                    [f.left for f in agg_df.index],
+                    agg_df["amount"],
+                    height=10**-tick_degits,
+                    color=colors[i],
+                    label=labels[i],
+                    alpha=0.5,
                 )
-                for i in range(g_ids)
-            ]
-            df_losscut["group_id"] = pd.cut(df_losscut["price"], bins=bins)
-            agg_df = df_losscut.groupby("group_id").sum()
-            ax2.barh(
-                [f.left for f in agg_df.index],
-                agg_df["amount"],
-                height=10**-tick_degits,
-                color=colors[i],
-                label=labels[i],
-                alpha=0.5,
-            )
-            if agg_df["amount"].max() > max_amount:
-                max_amount = agg_df["amount"].max()
+                if agg_df["amount"].max() > max_amount:
+                    max_amount = agg_df["amount"].max()
 
         # Save liquidation map data as csv
         #save_title = f"{self._symbol}_{self._start_datetime.replace(' ', '_').replace(':', '-')}-{self._end_datetime.replace(' ', '_').replace(':', '-')}"

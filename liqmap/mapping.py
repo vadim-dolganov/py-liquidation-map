@@ -285,7 +285,7 @@ class HistoricalMapping:
             raise InvalidParamError(f"mode {mode} is not supported.")
 
         # Visualize liquidation map
-        fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, sharey=True, figsize=(14, 10))
+        fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, sharey=True, figsize=(20, 12))
         # draw price on ax1
         for i, dt in enumerate(df_buy["timestamp"]):
             label = "large BUY LONG" if i == 0 else None
@@ -462,32 +462,35 @@ class HistoricalMapping:
         max_amount = 0
         for i, df_losscut in enumerate(df_losscut_list):
             df_losscut = df_losscut[df_losscut["price"] >= current_price]
-            g_ids = int(
-                (
-                    round(df_losscut["price"].max(), tick_degits)
-                    - round(df_losscut["price"].min(), tick_degits)
+            # Проверяем, есть ли значения для max и min
+            price_range = df_losscut["price"].max() - df_losscut["price"].min()
+            if not pd.isna(price_range) and price_range > 0:
+                g_ids = int(
+                    (
+                        round(df_losscut["price"].max(), tick_degits)
+                        - round(df_losscut["price"].min(), tick_degits)
+                    )
+                    * 10**tick_degits
                 )
-                * 10**tick_degits
-            )
-            bins = [
-                round(
-                    round(df_losscut["price"].min(), tick_degits)
-                    + i * 10**-tick_degits,
-                    tick_degits,
+                bins = [
+                    round(
+                        round(df_losscut["price"].min(), tick_degits)
+                        + i * 10**-tick_degits,
+                        tick_degits,
+                    )
+                    for i in range(g_ids)
+                ]
+                df_losscut["group_id"] = pd.cut(df_losscut["price"], bins=bins)
+                agg_df = df_losscut.groupby("group_id").sum()
+                ax2.barh(
+                    [f.left for f in agg_df.index],
+                    agg_df["amount"],
+                    height=10**-tick_degits,
+                    color=colors[i],
+                    alpha=0.5,
                 )
-                for i in range(g_ids)
-            ]
-            df_losscut["group_id"] = pd.cut(df_losscut["price"], bins=bins)
-            agg_df = df_losscut.groupby("group_id").sum()
-            ax2.barh(
-                [f.left for f in agg_df.index],
-                agg_df["amount"],
-                height=10**-tick_degits,
-                color=colors[i],
-                alpha=0.5,
-            )
-            if agg_df["amount"].max() > max_amount:
-                max_amount = agg_df["amount"].max()
+                if agg_df["amount"].max() > max_amount:
+                    max_amount = agg_df["amount"].max()
 
         ax2.annotate(
             "",

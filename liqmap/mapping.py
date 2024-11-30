@@ -552,13 +552,9 @@ class HistoricalMapping:
 
         # mode: gross_value
         if mode == "gross_value":
-            # Убедимся, что значения в столбце "amount" имеют числовой тип
             df_buy["amount"] = pd.to_numeric(df_buy["amount"], errors="coerce")
-            
-            # Удалим строки, где "amount" не удалось преобразовать в число (NaN)
             df_buy = df_buy.dropna(subset=["amount"])
-            
-            # Выполняем фильтрацию
+            df_buy = df_buy.dropna(how="all")
             df_buy = df_buy[df_buy["amount"] >= threshold_gross_value]
 
             df_sell = df_sell[df_sell["amount"] >= threshold_gross_value]

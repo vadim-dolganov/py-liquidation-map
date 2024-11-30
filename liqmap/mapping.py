@@ -256,13 +256,20 @@ class HistoricalMapping:
 
         # mode: gross_value
         if mode == "gross_value":
-            # Убедимся, что значения в столбце "amount" имеют числовой тип
+
+            # Преобразуем столбец "amount" в числовой тип
             df_buy["amount"] = pd.to_numeric(df_buy["amount"], errors="coerce")
             
-            # Удалим строки, где "amount" не удалось преобразовать в число (NaN)
+            # Удаление лишних пробелов, если столбец "amount" изначально строковый
+            df_buy["amount"] = df_buy["amount"].astype(str).str.strip()
+            
+            # Удаляем строки с NaN в столбце "amount"
             df_buy = df_buy.dropna(subset=["amount"])
             
-            # Выполняем фильтрацию
+            # Удаляем пустые строки (где все значения NaN)
+            df_buy = df_buy.dropna(how="all")
+            
+            # Фильтруем строки с учетом порога
             df_buy = df_buy[df_buy["amount"] >= threshold_gross_value]
             
             df_sell = df_sell[df_sell["amount"] >= threshold_gross_value]
